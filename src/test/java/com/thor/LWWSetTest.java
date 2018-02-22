@@ -70,7 +70,7 @@ public class LWWSetTest {
 
         final LWWSet<String> resultSet = firstLwwSet.merge(secondLwwSet);
         Set<String> lookup = resultSet.lookup();
-        assertEquals(lookup.size(), 3);
+        assertEquals(3, lookup.size());
         assertTrue(lookup.contains("ape"));
         assertTrue(lookup.contains("dog"));
         assertTrue(lookup.contains("tiger"));
