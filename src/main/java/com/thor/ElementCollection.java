@@ -16,6 +16,10 @@ public class ElementCollection<E> {
         this.map = map;
     }
 
+    /*
+    This method will replace the timestamp values in the collection if element exists and
+    the element timestamp is less than the new timestamp.
+     */
     public void add(E element, Long timestamp) {
         map.merge(element, timestamp, (key, value) -> {
             if(value <= timestamp) {

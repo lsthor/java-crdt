@@ -11,6 +11,8 @@ import java.util.stream.StreamSupport;
 public class LWWSet<E> {
 
     /*
+    A description on how LWWSet works.
+
     An alternative LWW-based approach, which we call LWW-element-Set,
     attaches a timestamp to each element (rather than to the whole set).
     Consider add-set A and remove-set R, each containing (element, timestamp) pairs.
@@ -34,27 +36,11 @@ public class LWWSet<E> {
     }
 
     public void add(Long timestamp, E payload) {
-//        boolean inRemoveSet = removeSet
-//                .stream()
-//                .filter(entry -> entry.getValue().compareTo(timestamp) > -1L && payload.equals(entry.getKey()))
-//                .findFirst()
-//                .isPresent();
-//
-//        if(inRemoveSet == false) {
-//            addSet.add(payload, timestamp);
-//            removeSet.remove(payload);
-//        }
         addSet.add(payload, timestamp);
     }
 
     public void remove(Long timestamp, E payload){
-//        Long addTimestamp = addSet.getTimestamp(payload);
-//        if(addTimestamp != null) {
-//            if(timestamp.compareTo(addTimestamp) > -1) {
-                removeSet.add(payload, timestamp);
-//                addSet.remove(payload);
-//            }
-//        }
+        removeSet.add(payload, timestamp);
     }
 
     public String dump() {
@@ -76,25 +62,6 @@ public class LWWSet<E> {
     }
 
     public Set<E> lookup() {
-
-//        boolean inRemoveSet = removeSet
-//                .stream()
-//                .filter(entry -> entry.getValue().compareTo(timestamp) > -1L && payload.equals(entry.getKey()))
-//                .findFirst()
-//                .isPresent();
-//
-//        if(inRemoveSet == false) {
-//            addSet.add(payload, timestamp);
-//            removeSet.remove(payload);
-//        }
-//
-//        Long addTimestamp = addSet.getTimestamp(payload);
-//        if(addTimestamp != null) {
-//            if(timestamp.compareTo(addTimestamp) > -1) {
-//                removeSet.add(payload, timestamp);
-//                addSet.remove(payload);
-//            }
-//        }
         return addSet.stream().filter(entry -> {
             Long timestamp = Optional.ofNullable(removeSet.getTimestamp(entry.getKey()))
                     .orElse(Long.MIN_VALUE);

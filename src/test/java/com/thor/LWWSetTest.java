@@ -29,8 +29,13 @@ public class LWWSetTest {
     }
 
 
+    /*
+    following test cases are referring to the test cases I found in the following URL
+    https://github.com/ajantis/java-crdt/blob/master/src/test/java/io/dmitryivanov/crdt/LWWSetTests.java
+    it might not be exactly the same copy but just giving a brief idea on what to test
+     */
     @Test
-    public void testAddAndRemoveScenario2() {
+    public void testLookup() {
         final LWWSet<String> lwwSet = new LWWSet<>();
 
         lwwSet.add(1L, "dog");
@@ -50,7 +55,7 @@ public class LWWSetTest {
     }
 
     @Test
-    public void testMerge() {
+    public void testLookupWithTwoSets() {
         final LWWSet<String> firstLwwSet = new LWWSet<>();
         firstLwwSet.add(3L, "ape");
         firstLwwSet.add(1L, "dog");
@@ -63,7 +68,6 @@ public class LWWSetTest {
         secondLwwSet.add(1L, "cat");
         secondLwwSet.remove(2L, "ape");
 
-        // Actual test
         final LWWSet<String> resultSet = firstLwwSet.merge(secondLwwSet);
         Set<String> lookup = resultSet.lookup();
         assertEquals(lookup.size(), 3);
