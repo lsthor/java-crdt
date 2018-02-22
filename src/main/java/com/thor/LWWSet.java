@@ -1,9 +1,6 @@
 package com.thor;
 
-import java.util.Optional;
-import java.util.OptionalLong;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -61,9 +58,23 @@ public class LWWSet<E> {
         return sb.toString();
     }
 
+
+    /*
+    In my opinion, there are 2 ways of doing lookup
+    1. When adding element or removing element, the code can start doing the filtering and merging
+    2. Filtering and merging only happened when lookup is invoked.
+    I implemented the first way previously but the code got a bit messy, so i refactored it to use
+    second way instead. Reason being when using first way we might need to synchcronize to prevent multiple
+    thread from adding/removing element at the same time. Synchronization might create complication.
+    And using second way we can create a snapshot of the collection and return the lookup, so any changes
+    to the collection during the lookup will not affected the return result.
+     */
     public Set<E> lookup() {
-        return addSet.stream().filter(entry -> {
-            Long timestamp = Optional.ofNullable(removeSet.getTimestamp(entry.getKey()))
+        final Map<E, Long> addSetSnapshot = addSet.snapshot();
+        final Map<E, Long> removeSetSnapshot = removeSet.snapshot();
+
+        return addSetSnapshot.entrySet().stream().filter(entry -> {
+            Long timestamp = Optional.ofNullable(removeSetSnapshot.get(entry.getKey()))
                     .orElse(Long.MIN_VALUE);
             return timestamp.compareTo(entry.getValue()) < 1;
         }).map(entry -> entry.getKey()).collect(Collectors.toSet());
